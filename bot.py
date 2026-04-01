@@ -2,7 +2,7 @@ import discord
 from discord.ext import tasks
 from discord import app_commands
 from datetime import datetime, timedelta
-from dotenv import python-dotenv
+from dotenv import load_dotenv
 import os
 
 load_dotenv()
