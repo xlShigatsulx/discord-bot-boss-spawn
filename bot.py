@@ -18,7 +18,7 @@ tree = app_commands.CommandTree(client)
 notified_5min = False
 notified_spawn = False
 
-BASE_SPAWN = datetime.now().replace(hour=13, minute=30, second=0, microsecond=0)
+BASE_SPAWN = datetime.now().replace(hour=1, minute=30, second=0, microsecond=0)
 
 def get_next_spawn():
     now = datetime.now()
