@@ -16,6 +16,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 notified_5min = False
+notified_1min = False
 notified_spawn = False
 
 BASE_SPAWN = datetime.now().replace(hour=1, minute=30, second=0, microsecond=0)
@@ -27,29 +28,29 @@ def get_next_spawn():
         spawn += timedelta(hours=2)
     return spawn
 
-@tree.command(name="boss", description="Час до боса", guild=discord.Object(id=GUILD_ID))
+@tree.command(name="boss", description="Time until boss spawn", guild=discord.Object(id=GUILD_ID))
 async def boss(interaction: discord.Interaction):
     next_spawn = get_next_spawn()
     unix_time = int(next_spawn.timestamp())
-    
+
     await interaction.response.send_message(
-        f"⏳ До боса: <t:{unix_time}:R>\n"
-        f"🕒 Спавн о: <t:{unix_time}:t>"
+        f"⏳ Boss in: <t:{unix_time}:R>\n"
+        f"🕒 Spawn at: <t:{unix_time}:t>"
     )
 
 @client.event
 async def on_ready():
-    print(f"Запущений як {client.user}")
+    print(f"Logged in as {client.user}")
     await tree.sync(guild=discord.Object(id=GUILD_ID))
     check_boss.start()
 
 @tasks.loop(seconds=30)
 async def check_boss():
-    global notified_5min, notified_spawn
+    global notified_5min, notified_1min, notified_spawn
 
     channel = client.get_channel(CHANNEL_ID)
     if channel is None:
-        print("Канал не знайдено!")
+        print("Channel not found!")
         return
 
     now = datetime.now()
@@ -57,15 +58,20 @@ async def check_boss():
     diff = (next_spawn - now).total_seconds()
 
     if 270 <= diff <= 330 and not notified_5min:
-        await channel.send("⚠️ Босс через 5 мин! @everyone")
+        await channel.send("⚠️ Boss spawns in 5 minutes! @everyone")
         notified_5min = True
 
+    if 30 <= diff <= 90 and not notified_1min:
+        await channel.send("⚠️ Boss spawns in 1 minute! @everyone")
+        notified_1min = True
+
     if diff <= 30 and not notified_spawn:
-        await channel.send("⚔️ Спавн Босса! @everyone")
+        await channel.send("⚔️ Boss has spawned! @everyone")
         notified_spawn = True
 
-    if diff > 60:
+    if diff > 330:
         notified_5min = False
+        notified_1min = False
         notified_spawn = False
 
 client.run(TOKEN)
