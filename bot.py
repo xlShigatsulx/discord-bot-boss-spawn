@@ -58,15 +58,15 @@ async def check_boss():
     diff = (next_spawn - now).total_seconds()
 
     if 270 <= diff <= 330 and not notified_5min:
-        await channel.send("⚠️ Boss spawns in 5 minutes! @everyone")
+        await channel.send("⚠️ Boss spawns in 5 minutes! @Boss-spawn")
         notified_5min = True
 
     if 30 <= diff <= 90 and not notified_1min:
-        await channel.send("⚠️ Boss spawns in 1 minute! @everyone")
+        await channel.send("⚠️ Boss spawns in 1 minute! @Boss-spawn")
         notified_1min = True
 
     if diff <= 30 and not notified_spawn:
-        await channel.send("⚔️ Boss has spawned! @everyone")
+        await channel.send("⚔️ Boss has spawned!")
         notified_spawn = True
 
     if diff > 330:
